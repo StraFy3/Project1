@@ -78,7 +78,7 @@ class Program
                     case "search":
                         if (parts.Length >= 2)
                         {
-                            string searchSequence = RLDecoding(parts[1].Trim());
+                            string searchSequence = RLDecoding(parts[1].Trim()); //
                             result += SearchSequence(searchSequence);
                         }
                         break;

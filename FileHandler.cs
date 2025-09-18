@@ -5,6 +5,10 @@ using System.Text;
 
 public static class FileHandler
 {
+   public static void ddd (string path)
+    {
+        
+    }
     public static List<GeneticData> LoadGeneticData(string filename)
     {
         List<GeneticData> geneticDataList = new List<GeneticData>();
@@ -68,7 +72,7 @@ public static class FileHandler
         return true;
     }
 
-    private static string RLDecoding(string encoded)
+    private static string RLDecoding(string encoded) //
     {
         StringBuilder decoded = new StringBuilder();
         int i = 0;

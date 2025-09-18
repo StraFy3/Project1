@@ -1,0 +1,8 @@
+In filehandler:
+public static string RLDecoding(string encoded)
+{
+
+}
+
+In programm1:
+string searchSequence = FileHandler.RLDecoding(parts[1].Trim());
