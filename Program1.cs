@@ -27,18 +27,18 @@ class Program
         try
         {
             // Load genetic data from file
-            geneticDataList = FileHandler.LoadGeneticData("sequences.txt");
+            geneticDataList = FileHandler.LoadGeneticData("C:\\Users\\Lenovo\\source\\repos\\Project1\\file\\sequences.txt");
             Console.WriteLine($"Loaded {geneticDataList.Count} valid protein records.");
 
             // Load commands from file
-            string[] commands = FileHandler.LoadCommands("commands.txt");
+            string[] commands = FileHandler.LoadCommands("C:\\Users\\Lenovo\\source\\repos\\Project1\\file\\commands.txt");
             Console.WriteLine($"Loaded {commands.Length} commands.");
 
             // Process commands and generate output
             string output = ProcessCommands(commands);
 
             // Write results to file
-            FileHandler.WriteResults("results.txt", output);
+            FileHandler.WriteResults("C:\\Users\\Lenovo\\source\\repos\\Project1\\file\\results.txt", output);
 
             Console.WriteLine("Processing completed successfully.");
         }
@@ -212,8 +212,8 @@ class Program
 
         if (proteinData == null)
         {
-            Console.WriteLine($"amino-acid occurs:");
-            Console.WriteLine($"MISSING: {proteinName}");
+            result.AppendLine("amino-acid occurs:");
+            result.Append($"MISSING: {proteinName}");
         }
         else
         {

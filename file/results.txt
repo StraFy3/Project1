@@ -1,0 +1,33 @@
+Genetic Data Analysis Results
+==============================
+
+001: search	VLSPAD
+Human Hemoglobin
+
+--------------------------------------------------
+
+002: diff	Hemoglobin	Insulin
+amino-acids difference:
+141
+--------------------------------------------------
+
+003: mode	Hemoglobin
+amino-acid occurs:
+A 21
+--------------------------------------------------
+
+004: search	XYZ
+NOT FOUND
+
+--------------------------------------------------
+
+005: diff	Hemoglobin	NonExistentProtein
+amino-acids difference:
+MISSING: NonExistentProtein
+--------------------------------------------------
+
+006: mode	NonExistentProtein
+amino-acid occurs:
+MISSING: NonExistentProtein
+--------------------------------------------------
+

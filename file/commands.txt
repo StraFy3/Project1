@@ -1,0 +1,6 @@
+search	VLSPAD
+diff	Hemoglobin	Insulin
+mode	Hemoglobin
+search	XYZ
+diff	Hemoglobin	NonExistentProtein
+mode	NonExistentProtein

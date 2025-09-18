@@ -41,6 +41,9 @@
     <Compile Include="Program1.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="file\commands.txt" />
+    <Content Include="file\results.txt" />
+    <Content Include="file\sequences.txt" />
     <Content Include="file\test.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
