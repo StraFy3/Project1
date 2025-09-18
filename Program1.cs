@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 // Structure to store genetic data
-struct GeneticData
+public struct GeneticData
 {
     public string protein;
     public string organism;
