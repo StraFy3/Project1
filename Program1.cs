@@ -20,94 +20,97 @@ class Program
 
     static void Main(string[] args)
     {
-        Console.WriteLine("Amino Acid RLE Encoder/Decoder");
+        Console.WriteLine("Genetic Data Analysis Program");
         Console.WriteLine("==============================");
 
         // Load genetic data
         try
         {
-            LoadGeneticData();
-            Console.WriteLine($"Loaded {geneticDataList.Count} protein records.");
+            // Load genetic data from file
+            geneticDataList = FileHandler.LoadGeneticData("sequences.txt");
+            Console.WriteLine($"Loaded {geneticDataList.Count} valid protein records.");
+
+            // Load commands from file
+            string[] commands = FileHandler.LoadCommands("commands.txt");
+            Console.WriteLine($"Loaded {commands.Length} commands.");
+
+            // Process commands and generate output
+            string output = ProcessCommands(commands);
+
+            // Write results to file
+            FileHandler.WriteResults("results.txt", output);
+
+            Console.WriteLine("Processing completed successfully.");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Warning: Could not load genetic data: {ex.Message}");
-            Console.WriteLine("Search, diff, and mode functions will not be available.");
+            Console.WriteLine($"Error: {ex.Message}");
         }
 
-        while (true)
-        {
-            Console.WriteLine("\nPlease choose an option:");
-            Console.WriteLine("1. Encode an amino acid sequence");
-            Console.WriteLine("2. Decode an RLE-encoded sequence");
-            Console.WriteLine("3. Search for amino acid sequence");
-            Console.WriteLine("4. Compare two proteins (diff)");
-            Console.WriteLine("5. Find most frequent amino acid (mode)");
-            Console.WriteLine("6. Validate amino acid sequence");
-            Console.WriteLine("7. Exit");
-            Console.Write("Enter your choice (1-7): ");
-
-            string choice = Console.ReadLine();
-
-            switch (choice)
-            {
-                case "1":
-                    EncodeSequence();
-                    break;
-                case "2":
-                    DecodeSequence();
-                    break;
-                case "3":
-                    SearchSequence();
-                    break;
-                case "4":
-                    DiffProteins();
-                    break;
-                case "5":
-                    ModeProtein();
-                    break;
-                case "6":
-                    ValidateSequence();
-                    break;
-                case "7":
-                    Console.WriteLine("Goodbye!");
-                    return;
-                default:
-                    Console.WriteLine("Invalid choice. Please try again.");
-                    break;
-            }
-        }
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey();
     }
 
-    static void LoadGeneticData()
+    static string ProcessCommands(string[] commands)
     {
-        geneticDataList.Add(new GeneticData
-        {
-            protein = "Hemoglobin",
-            organism = "Human",
-            amino_acids = "VLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR"
-        });
+        StringBuilder output = new StringBuilder();
+        output.AppendLine("Genetic Data Analysis Results");
+        output.AppendLine("==============================");
+        output.AppendLine();
 
-        geneticDataList.Add(new GeneticData
+        int commandNumber = 1;
+        foreach (string commandLine in commands)
         {
-            protein = "Insulin",
-            organism = "Human",
-            amino_acids = "FVNQHLCGSHLVEALYLVCGERGFFYTPKT"
-        });
+            if (string.IsNullOrWhiteSpace(commandLine))
+                continue;
 
-        geneticDataList.Add(new GeneticData
-        {
-            protein = "Insulin2",
-            organism = "Human",
-            amino_acids = "FVNQHLCGSHLVEALYLVCGERGFFYTPKTTTTTTTTT"
-        });
+            string[] parts = commandLine.Split('\t');
+            if (parts.Length == 0)
+                continue;
 
-        geneticDataList.Add(new GeneticData
-        {
-            protein = "Cytochrome C",
-            organism = "Horse",
-            amino_acids = "GDVEKGKKIFIMKCSQCHTVEKGGKHKTGPNLHGLFGRKTGQAPGYSYTAANKNKGIIWGEDTLMEYLENPKKYIPGTKMIFVGIKKKEERADLIAYLKKATNE"
-        });
+            string operation = parts[0].Trim().ToLower();
+            string result = $"{commandNumber:D3}: {commandLine}\n";
+
+            try
+            {
+                switch (operation)
+                {
+                    case "search":
+                        if (parts.Length >= 2)
+                        {
+                            string searchSequence = RLDecoding(parts[1].Trim());
+                            result += SearchSequence(searchSequence);
+                        }
+                        break;
+                    case "diff":
+                        if (parts.Length >= 3)
+                        {
+                            result += DiffProteins(parts[1].Trim(), parts[2].Trim());
+                        }
+                        break;
+                    case "mode":
+                        if (parts.Length >= 2)
+                        {
+                            result += ModeProtein(parts[1].Trim());
+                        }
+                        break;
+                    default:
+                        result += "Unknown command";
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                result += $"Error processing command: {ex.Message}";
+            }
+
+            output.AppendLine(result);
+            output.AppendLine(new string('-', 50));
+            output.AppendLine();
+
+            commandNumber++;
+        }
+        return output.ToString();
     }
 
     static void EncodeSequence()

@@ -43,12 +43,18 @@ public static class FileHandler
 
     public static string[] LoadCommands(string filename)
     {
+        if (!File.Exists(filename))
+        {
+            throw new FileNotFoundException($"File {filename} not found.");
+        }
 
+        return File.ReadAllLines(filename);
     }
 
     public static void WriteResults(string filename, string content)
     {
-       
+        File.WriteAllText(filename, content);
+        Console.WriteLine($"Results written to {filename}");
     }
 
     private static bool IsValidAminoAcidSequence(string sequence)
