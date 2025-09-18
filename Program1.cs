@@ -113,30 +113,6 @@ class Program
         return output.ToString();
     }
 
-    static void EncodeSequence()
-    {
-        Console.Write("Enter the amino acid sequence to encode: ");
-        string input = Console.ReadLine();
-
-        if (string.IsNullOrWhiteSpace(input))
-        {
-            Console.WriteLine("Invalid input. Sequence cannot be empty.");
-            return;
-        }
-
-        if (!IsValidAminoAcidSequence(input))
-        {
-            Console.WriteLine("Warning: Sequence contains invalid amino acid characters.");
-            Console.WriteLine("Valid amino acids are: " + validAminoAcids);
-            Console.Write("Do you want to continue anyway? (y/n): ");
-            if (Console.ReadLine().ToLower() != "y")
-                return;
-        }
-
-        string encoded = RLEncoding(input);
-        Console.WriteLine($"Encoded sequence: {encoded}");
-    }
-
     static void DecodeSequence()
     {
         Console.Write("Enter the RLE-encoded sequence to decode: ");
@@ -153,70 +129,37 @@ class Program
     }
 
     //Search for amino acid sequence in loaded proteins
-    static void SearchSequence()
+    static string SearchSequence(string searchSequence)
     {
-        if (geneticDataList.Count == 0)
-        {
-            Console.WriteLine("No genetic data loaded. Cannot perform search.");
-            return;
-        }
-
-        Console.Write("Enter the amino acid sequence to search for: ");
-        string searchSequence = Console.ReadLine();
-
-        if (string.IsNullOrWhiteSpace(searchSequence))
-        {
-            Console.WriteLine("Invalid input. Search sequence cannot be empty.");
-            return;
-        }
-
-        // Decode if it's RLE encoded
-        if (ContainsDigits(searchSequence))
-        {
-            searchSequence = RLDecoding(searchSequence);
-            Console.WriteLine($"Decoded search sequence: {searchSequence}");
-        }
-
+        StringBuilder result = new StringBuilder();
         bool found = false;
-        Console.WriteLine("\nSearch results:");
-        Console.WriteLine("===============");
 
         foreach (GeneticData data in geneticDataList)
         {
             if (data.amino_acids.Contains(searchSequence))
             {
-                Console.WriteLine($"Found in: {data.organism} - {data.protein}");
+                result.AppendLine($"{data.organism} {data.protein}");
                 found = true;
             }
         }
 
         if (!found)
         {
-            Console.WriteLine("NOT FOUND");
+            result.AppendLine("NOT FOUND");
         }
+
+        return result.ToString();
     }
 
     // DIFF function: Compare two proteins
-    static void DiffProteins()
+    static string DiffProteins(string protein1, string protein2)
     {
-        if (geneticDataList.Count == 0)
-        {
-            Console.WriteLine("No genetic data loaded. Cannot perform diff.");
-            return;
-        }
-
-        Console.Write("Enter first protein name: ");
-        string protein1 = Console.ReadLine();
-
-        Console.Write("Enter second protein name: ");
-        string protein2 = Console.ReadLine();
-
+        StringBuilder result = new StringBuilder();
         GeneticData? data1 = null, data2 = null;
         List<string> missingProteins = new List<string>();
-      //  char.IsUpper('a');
         foreach (GeneticData data in geneticDataList)
         {
-            if (data.protein.Equals(protein1, StringComparison.OrdinalIgnoreCase))   
+            if (data.protein.Equals(protein1, StringComparison.OrdinalIgnoreCase))
                 data1 = data;
             if (data.protein.Equals(protein2, StringComparison.OrdinalIgnoreCase))
                 data2 = data;
@@ -227,41 +170,36 @@ class Program
 
         if (missingProteins.Count > 0)
         {
-            Console.WriteLine($"amino-acids difference:");
-            Console.WriteLine($"MISSING: {string.Join(", ", missingProteins)}");
-            return;
+            result.AppendLine("amino-acids difference:");
+            result.Append($"MISSING: {string.Join(", ", missingProteins)}");
         }
-
-        // Calculate differences
-        string seq1 = data1.Value.amino_acids;
-        string seq2 = data2.Value.amino_acids;
-        int differences = 0;
-        int minLength = Math.Min(seq1.Length, seq2.Length);
-
-        for (int i = 0; i < minLength; i++)
+        else
         {
-            if (seq1[i] != seq2[i])
-                differences++;
+
+            // Calculate differences
+            string seq1 = data1.Value.amino_acids;
+            string seq2 = data2.Value.amino_acids;
+            int differences = 0;
+            int minLength = Math.Min(seq1.Length, seq2.Length);
+
+            for (int i = 0; i < minLength; i++)
+            {
+                if (seq1[i] != seq2[i])
+                    differences++;
+            }
+
+            differences += Math.Abs(seq1.Length - seq2.Length);
+
+            result.AppendLine("amino-acids difference:");
+            result.Append(differences.ToString());
         }
-
-        differences += Math.Abs(seq1.Length - seq2.Length);
-
-        Console.WriteLine($"amino-acids difference:");
-        Console.WriteLine(differences);
+        return result.ToString();
     }
 
     //Find most frequent amino acid in a protein
-    static void ModeProtein()
+    static string ModeProtein(string proteinName)
     {
-        if (geneticDataList.Count == 0)
-        {
-            Console.WriteLine("No genetic data loaded. Cannot perform mode.");
-            return;
-        }
-
-        Console.Write("Enter protein name: ");
-        string proteinName = Console.ReadLine();
-
+        StringBuilder result = new StringBuilder();
         GeneticData? proteinData = null;
         foreach (GeneticData data in geneticDataList)
         {
@@ -276,96 +214,46 @@ class Program
         {
             Console.WriteLine($"amino-acid occurs:");
             Console.WriteLine($"MISSING: {proteinName}");
-            return;
-        }
-
-        // Calculate frequency of each amino acid
-        Dictionary<char, int> frequency = new Dictionary<char, int>();
-        foreach (char c in proteinData.Value.amino_acids)
-        {
-            if (frequency.ContainsKey(c))
-                frequency[c]++;
-            else
-                frequency[c] = 1;
-        }
-
-        // Find the most frequent amino acid
-        char mostFrequent = ' ';
-        int maxCount = 0;
-
-        foreach (var pair in frequency)
-        {
-            if (pair.Value > maxCount ||
-                (pair.Value == maxCount && pair.Key < mostFrequent))
-            {
-                mostFrequent = pair.Key;
-                maxCount = pair.Value;
-            }
-        }
-
-        Console.WriteLine($"amino-acid occurs:");
-        Console.WriteLine($"{mostFrequent} {maxCount}");
-    }
-
-    // Check if amino acid sequence is valid
-    static void ValidateSequence()
-    {
-        Console.Write("Enter the amino acid sequence to validate: ");
-        string input = Console.ReadLine();
-
-        if (string.IsNullOrWhiteSpace(input))
-        {
-            Console.WriteLine("Invalid input. Sequence cannot be empty.");
-            return;
-        }
-
-        if (IsValidAminoAcidSequence(input))
-        {
-            Console.WriteLine("Sequence is VALID - contains only standard amino acid codes.");
         }
         else
         {
-            Console.WriteLine("Sequence is INVALID - contains non-standard characters.");
-            Console.WriteLine("Valid amino acids are: " + validAminoAcids);
-
-            // Show which characters are invalid
-            List<char> invalidChars = new List<char>();
-            foreach (char c in input)
+            // Calculate frequency of each amino acid
+            Dictionary<char, int> frequency = new Dictionary<char, int>();
+            foreach (char c in proteinData.Value.amino_acids)
             {
-                if (validAminoAcids.IndexOf(char.ToUpper(c)) == -1 && !invalidChars.Contains(c))
-                    invalidChars.Add(c);
+                if (frequency.ContainsKey(c))
+                    frequency[c]++;
+                else
+                    frequency[c] = 1;
             }
 
-            if (invalidChars.Count > 0)
-                Console.WriteLine("Invalid characters: " + string.Join(", ", invalidChars));
-        }
-    }
+            // Find the most frequent amino acid
+            char mostFrequent = ' ';
+            int maxCount = 0;
 
-    // Check if a sequence contains only valid amino acid characters
-    static bool IsValidAminoAcidSequence(string sequence)
-    {
-        foreach (char c in sequence)
-        {
-            if (validAminoAcids.IndexOf(char.ToUpper(c)) == -1)
-                return false;
-        }
-        return true;
-    }
+            foreach (var pair in frequency)
+            {
+                if (pair.Value > maxCount ||
+                    (pair.Value == maxCount && pair.Key < mostFrequent))
+                {
+                    mostFrequent = pair.Key;
+                    maxCount = pair.Value;
+                }
+            }
 
-    // Check if a string contains digits (to detect RLE encoding)
-    static bool ContainsDigits(string s)
-    {
-        foreach (char c in s)
-        {
-            if (char.IsDigit(c))
-                return true;
+            result.AppendLine("amino-acid occurs:");
+            result.Append($"{mostFrequent} {maxCount}");
         }
-        return false;
+        return result.ToString();
     }
 
     static string RLEncoding(string amino_acids)
     {
         StringBuilder encoded = new StringBuilder();
+        if (string.IsNullOrEmpty(amino_acids))
+            return "";
+
+
         int count = 1;
         char current = amino_acids[0];
 
