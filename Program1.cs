@@ -78,7 +78,7 @@ class Program
                     case "search":
                         if (parts.Length >= 2)
                         {
-                            string searchSequence = RLDecoding(parts[1].Trim()); //
+                            string searchSequence = FileHandler.RLDecoding(parts[1].Trim()); // FileHandler decoder
                             result += SearchSequence(searchSequence);
                         }
                         break;
@@ -124,7 +124,7 @@ class Program
             return;
         }
 
-        string decoded = RLDecoding(input);
+        string decoded = FileHandler.RLDecoding(input); // FileHandler decoder
         Console.WriteLine($"Decoded sequence: {decoded}");
     }
 
@@ -293,35 +293,5 @@ class Program
         encoded.Append(current);
 
         return encoded.ToString();
-    }
-
-    static string RLDecoding(string amino_acids)
-    {
-        StringBuilder decoded = new StringBuilder();
-        int i = 0;
-
-        while (i < amino_acids.Length)
-        {
-            if (char.IsDigit(amino_acids[i]))
-            {
-                // Get the count using int.Parse()
-                int count = int.Parse(amino_acids[i].ToString());
-                char aminoAcid = amino_acids[i + 1];
-
-                // Append the character 'count' times
-                decoded.Append(aminoAcid, count);
-
-                // Move past the digit and the character
-                i += 2;
-            }
-            else
-            {
-                // Single character
-                decoded.Append(amino_acids[i]);
-                i++;
-            }
-        }
-
-        return decoded.ToString();
     }
 }

@@ -1,33 +1,43 @@
 Genetic Data Analysis Results
 ==============================
 
-001: search	VLSPAD
-Human Hemoglobin
+001: search	SIIK
+Homo sapiens (Human) 6.8 kDa mitochondrial proteolipid
 
 --------------------------------------------------
 
-002: diff	Hemoglobin	Insulin
-amino-acids difference:
-141
+002: search	PLML
+Homo sapiens (Human) Pre-T/NK cell associated protein 6H9A
+
 --------------------------------------------------
 
-003: mode	Hemoglobin
-amino-acid occurs:
-A 21
---------------------------------------------------
-
-004: search	XYZ
+003: search	FK3I
 NOT FOUND
 
 --------------------------------------------------
 
-005: diff	Hemoglobin	NonExistentProtein
+004: diff	6.8 kDa mitochondrial proteolipid	Alcohol dehydrogenase
 amino-acids difference:
-MISSING: NonExistentProtein
+81
 --------------------------------------------------
 
-006: mode	NonExistentProtein
+005: diff	RNA-dependent RNA polymerase [Fragment]	Alcohol dehydrogenase
+amino-acids difference:
+115
+--------------------------------------------------
+
+006: diff	Cecropin	Pre-T/NK cell associated protein 6H9A
+amino-acids difference:
+56
+--------------------------------------------------
+
+007: mode	Cecropin
 amino-acid occurs:
-MISSING: NonExistentProtein
+A 5
+--------------------------------------------------
+
+008: mode	Alcohol dehydrogenase
+amino-acid occurs:
+V 11
 --------------------------------------------------
 

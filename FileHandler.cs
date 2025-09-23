@@ -87,7 +87,7 @@ public static class FileHandler
         return true;
     }
 
-    private static string RLDecoding(string encoded) //
+    public static string RLDecoding(string encoded) // Public
     {
         StringBuilder decoded = new StringBuilder();
         int i = 0;
