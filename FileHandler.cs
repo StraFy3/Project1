@@ -5,24 +5,32 @@ using System.Text;
 
 public static class FileHandler
 {
-   public static void ddd (string path)
-    {
-        
-    }
+
+
     public static List<GeneticData> LoadGeneticData(string filename)
     {
         List<GeneticData> geneticDataList = new List<GeneticData>();
-
         if (!File.Exists(filename))
         {
             throw new FileNotFoundException($"File {filename} not found.");
         }
 
         string[] lines = File.ReadAllLines(filename);
-        foreach (string line in lines)
+        for (int lineNumber = 0; lineNumber < lines.Length; lineNumber++) // Line number tracking
         {
+            string line = lines[lineNumber];
+
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+
             string[] parts = line.Split('\t');
-            if (parts.Length == 3)
+            if (parts.Length != 3) // Validation for exactly 3 parts
+            {
+                Console.WriteLine($"Warning: Line {lineNumber + 1} has incorrect format. Expected 3 tab-separated parts, got {parts.Length}. Skipping."); // NEW: error message with line number
+                continue;
+            }
+
+            try
             {
                 GeneticData data = new GeneticData
                 {
@@ -34,11 +42,18 @@ public static class FileHandler
                 // Validate amino acid sequence
                 if (!IsValidAminoAcidSequence(data.amino_acids))
                 {
-                    Console.WriteLine($"Warning: Invalid amino acid sequence in {data.protein}. Skipping.");
+                    Console.WriteLine($"Warning: Line {lineNumber + 1} has invalid amino acid" +
+                        $" sequence in {data.protein}. Skipping."); // Error message with line number
                     continue;
                 }
 
                 geneticDataList.Add(data);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Warning: Error processing line {lineNumber + 1}:" +
+                    $" {ex.Message}. Skipping."); // Error handling with line number
+                continue;
             }
         }
 
